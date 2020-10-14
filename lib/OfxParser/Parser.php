@@ -121,7 +121,7 @@ class Parser
         $line = trim($line);
         if (preg_match('/<MEMO>$/', $line) === 1) {
             return '<MEMO></MEMO>';
-        } else if ($line == "</MEMO>") {
+        } else if ((preg_match('/<MEMO>/', $line) === 0) && (preg_match('/<\/MEMO>$/', $line) === 1)) {
             return "";
         }
 
