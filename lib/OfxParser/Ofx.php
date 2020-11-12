@@ -80,8 +80,12 @@ class Ofx
      * @return SignOn
      * @throws \Exception
      */
-    protected function buildSignOn(SimpleXMLElement $xml)
+    protected function buildSignOn(SimpleXMLElement $xml = null)
     {
+        if (null === $xml) {
+            return [];
+        }
+
         $signOn = new SignOn();
         $signOn->status = $this->buildStatus($xml->STATUS);
         $signOn->date = Utils::createDateTimeFromStr($xml->DTSERVER, true);
