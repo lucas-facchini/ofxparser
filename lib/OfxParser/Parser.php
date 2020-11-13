@@ -123,6 +123,8 @@ class Parser
             return '<MEMO></MEMO>';
         } else if ((preg_match('/<MEMO>/', $line) === 0) && (preg_match('/<\/MEMO>$/', $line) === 1)) {
             return "";
+        } else if ((preg_match('/<MEMO>/', $line) === 1) && (preg_match('/<\/MEMO>$/', $line) === 0)) {
+            return $line . "</MEMO>";
         }
 
         // Matches: <SOMETHING>blah
