@@ -88,22 +88,16 @@ class Utils
      */
     public static function createAmountFromStr($amountString)
     {
-        // Decimal mark style (UK/US): 000.00 or 0,000.00
-        if (preg_match('/^(-|\+)?([\d,]+)(\.?)([\d]{2})$/', $amountString) === 1) {
-            return (float)preg_replace(
-                ['/([,]+)/', '/\.?([\d]{2})$/'],
-                ['', '.$1'],
-                $amountString
-            );
+        $amountString = str_replace(' ', '', $amountString);
+
+        // US style: [.0 | .00 | 000.00 | 0,000.00 | 0,000 | 0,000.0 | 000. | 0 | .]
+        if (preg_match('/^(-|\+)?(([\d]+)?|([\d]{1,3}((\,[\d]{3})+)?))(\.[\d]{0,2})?$/', $amountString) === 1) {
+            return (float)(str_replace(',', '', $amountString));
         }
 
-        // European style: 000,00 or 0.000,00
-        if (preg_match('/^(-|\+)?([\d\.]+,?[\d]{2})$/', $amountString) === 1) {
-            return (float)preg_replace(
-                ['/([\.]+)/', '/,?([\d]{2})$/'],
-                ['', '.$1'],
-                $amountString
-            );
+        // BR style: [,0 | ,00 | 000,00 | 0.000,00 | 0.000 | 0.000,0 | 000, | 0 | ,]
+        if (preg_match('/^(-|\+)?(([\d]+)?|([\d]{1,3}((\.[\d]{3})+)?))(\,[\d]{0,2})?$/', $amountString) === 1) {
+            return (float)(str_replace(',', '.', (str_replace('.', '', $amountString))));
         }
 
         return (float)$amountString;
