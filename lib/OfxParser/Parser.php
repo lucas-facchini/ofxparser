@@ -124,8 +124,13 @@ class Parser
         } else if ((preg_match('/<MEMO>/', $line) === 0) && (preg_match('/<\/MEMO>$/', $line) === 1)) {
             return "";
         } else if ((preg_match('/<MEMO>/', $line) === 1) && (preg_match('/<\/MEMO>$/', $line) === 0)) {
-            return $line . "</MEMO>";
-        }
+			$line = $line . "</MEMO>";
+		}
+
+		if (preg_match("/(<MEMO>)(.*)(<\/MEMO>)$/", $line, $matches)) {
+			$matches[2] = $this->cleanString($matches[2]);
+			return "{$matches[1]}{$matches[2]}{$matches[3]}";
+		}
 
         // Matches: <SOMETHING>blah
         // Does not match: <SOMETHING>
@@ -139,6 +144,23 @@ class Parser
         }
         return $line;
     }
+
+    /**
+     * Clear special characters from a string.
+     *
+     * @param string $text
+     * @return string
+     */
+    private static function cleanString($text = '') {
+		$text = trim($text);
+		$aFind = array('&', 'á', 'à', 'ã', 'â', 'é', 'ê', 'í', 'ó', 'ô', 'õ', 'ú', 'ü',
+			'ç', 'Á', 'À', 'Ã', 'Â', 'É', 'Ê', 'Í', 'Ó', 'Ô', 'Õ', 'Ú', 'Ü', 'Ç');
+		$aSubs = array('e', 'a', 'a', 'a', 'a', 'e', 'e', 'i', 'o', 'o', 'o', 'u', 'u',
+			'c', 'A', 'A', 'A', 'A', 'E', 'E', 'I', 'O', 'O', 'O', 'U', 'U', 'C');
+		$newText = str_replace($aFind, $aSubs, $text);
+		$newText = preg_replace("/[^a-zA-Z0-9 @,-.;:\/]/", "", $newText);
+		return $newText;
+	}
 
     /**
      * Parse the SGML Header to an Array
